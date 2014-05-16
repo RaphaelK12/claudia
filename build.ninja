@@ -1,0 +1,26 @@
+ninja_required_version = 1.3
+
+srcdir = src
+builddir = build
+cxx = clang++
+cflags = -stdlib=libc++ -std=c++11 -pipe -O2 -fsanitize=undefined -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic
+ldflags = -Wl,-O1 -Wl,--hash-style=gnu -Wl,--sort-common -Wl,--demangle -Wl,--build-id
+
+rule cxx
+  deps = gcc
+  command = $cxx -MMD -MT $out -MF $out.d $cflags -c $in -o $out
+  description = CXX $out
+  depfile = $out.d
+
+rule link
+  command = $cxx $cflags $ldflags -o $out $in $libs
+  description = LINK $out
+
+build $builddir/main.o: cxx $srcdir/main.cc
+build $builddir/option.o: cxx $srcdir/option.cc
+build $builddir/diagnostic.o: cxx $srcdir/diagnostic.cc
+build $builddir/parser.o: cxx $srcdir/parser.cc
+build claudia: link $builddir/main.o $builddir/option.o $builddir/diagnostic.o $builddir/parser.o
+
+default claudia
+build all: phony claudia
