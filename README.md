@@ -2,10 +2,14 @@
 
 Clang Universal Diagnostics Parser
 
+Claudia parses Clang's -Weverything diagnostics and tries her best to polish the reults.
+
 
 ## Getting started
 
-Required: recent clang (tested with 3.4) and libc++ (primarily for regex support); recent gcc/libstdc++ setups may work, too.
+Required:
+* recent clang (tested with 3.4) and libc++ (primarily for regex support)
+* recent gcc/libstdc++ setups may work, too.
 
 Build claudia using the ninja build system:
 

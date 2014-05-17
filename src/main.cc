@@ -8,7 +8,7 @@
 
 int main(int argc, char** argv) try
 {
-  detail::option opt{argc, argv, "diagnostics.txt"};
+  detail::option opt{argc, argv, "diagnostics.txt [ --csv | --json ]"};
 
   if (!opt.require(1))
     return opt.abort("diagnostics file expected");
@@ -22,8 +22,10 @@ int main(int argc, char** argv) try
 
   detail::parser par{in};
 
-  /* XXX: just print it for now.. */
-  std::cout << par;
+  if (opt.require(2) && opt.get<std::string>(1) == "--csv")
+    std::cout << par.csv();
+  else /* json by default */
+    std::cout << par.json();
 }
 catch (const std::exception& e)
 {
