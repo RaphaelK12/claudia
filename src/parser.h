@@ -11,7 +11,6 @@ namespace detail {
 
 class parser {
 private:
-  std::string raw_;
   std::vector<diagnostic> diagnostics_;
 
 public:

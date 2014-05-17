@@ -1,8 +1,6 @@
 #ifndef CONFIG_GUARD
 #define CONFIG_GUARD
 
-#include <string>
-
 namespace detail {
 namespace config {
   namespace {

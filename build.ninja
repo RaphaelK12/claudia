@@ -4,7 +4,7 @@ srcdir = src
 builddir = build
 cxx = clang++
 cflags = -stdlib=libc++ -std=c++11 -pipe -O2 -march=native -mtune=native -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic
-ldflags = -Wl,-O1 -Wl,--hash-style=gnu -Wl,--sort-common -Wl,--demangle -Wl,--build-id -Wl,--as-needed
+ldflags = -Wl,-O1 -Wl,--hash-style=gnu -Wl,--sort-common -Wl,--demangle -Wl,--build-id
 
 rule cxx
   deps = gcc
