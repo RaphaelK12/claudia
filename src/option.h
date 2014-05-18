@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include <iosfwd>
-#include <utility>
 
 #include "as.h"
 
@@ -20,8 +19,6 @@ private:
 public:
   option(int argc, char** argv, std::string parameter);
   option(int argc, char** argv);
-
-  auto split() const -> std::pair<decltype(filename_), decltype(arguments_)>;
 
   auto usage(std::ostream& out, const std::string& msg) const -> std::ostream&;
   auto abort(const std::string& msg) const -> decltype(EXIT_FAILURE);
