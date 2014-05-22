@@ -1,33 +1,52 @@
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <stdexcept>
 
-#include "option.h"
+#include "options.h"
 #include "parser.h"
+
+using namespace claudia;
 
 int main(int argc, char** argv) try
 {
-  detail::option opt{argc, argv, "diagnostics.txt [ --csv | --json ]"};
+  const auto desc = make_options_description();
+  const auto pos = make_positional_options_description();
 
-  if (!opt.require(1))
-    return opt.abort("diagnostics file expected");
+  options::command_line_parser cmd(argc, argv);
+  cmd.options(desc);
+  cmd.positional(pos);
 
+  options::variables_map variables;
+  options::store(cmd.run(), variables);
 
-  std::ifstream in{opt.get<std::string>(0)};
+  if (variables.count("help")) {
+    std::cout << "Usage: " << argv[0] << " input-file output-file\n";
+    std::cout << desc;
+    return EXIT_SUCCESS;
+  }
 
+  options::notify(variables);
+
+  const auto infile = variables["input-file"].as<std::string>();
+  const auto outfile = variables["output-file"].as<std::string>();
+
+  std::ifstream in{infile};
   if (!in)
-    return opt.abort("bad diagnostics file");
+    throw std::runtime_error{"bad input-file"};
 
+  std::ofstream out{outfile};
+  if (!out)
+    throw std::runtime_error{"bad outut-file"};
 
-  detail::parser par{in};
+  const auto fmt = variables["format"].as<std::string>();
 
-  if (opt.require(2) && opt.get<std::string>(1) == "--csv")
-    std::cout << par.csv();
-  else /* json by default */
-    std::cout << par.json();
+  parser parser{in, fmt};
+  parser.report(out);
 }
 catch (const std::exception& e)
 {
-  std::cerr << e.what() << '\n';
+  std::cerr << "Error: " << e.what() << '\n';
+  return EXIT_FAILURE;
 }

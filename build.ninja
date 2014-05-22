@@ -3,8 +3,9 @@ ninja_required_version = 1.3
 srcdir = src
 builddir = build
 cxx = clang++
-cflags = -stdlib=libc++ -std=c++11 -pipe -O2 -march=native -mtune=native -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic
+cflags = -fcolor-diagnostics -pipe -O2 -g -mtune=native -march=native -std=c++11 -ferror-limit=3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic
 ldflags = -Wl,-O1 -Wl,--hash-style=gnu -Wl,--sort-common -Wl,--demangle -Wl,--build-id
+libs = -lboost_program_options -lboost_regex
 
 rule cxx
   deps = gcc
@@ -17,10 +18,10 @@ rule link
   description = LINK $out
 
 build $builddir/main.o: cxx $srcdir/main.cc
-build $builddir/option.o: cxx $srcdir/option.cc
+build $builddir/options.o: cxx $srcdir/options.cc
 build $builddir/diagnostic.o: cxx $srcdir/diagnostic.cc
 build $builddir/parser.o: cxx $srcdir/parser.cc
-build claudia: link $builddir/main.o $builddir/option.o $builddir/diagnostic.o $builddir/parser.o
+build claudia: link $builddir/main.o $builddir/options.o $builddir/diagnostic.o $builddir/parser.o
 
 default claudia
 build all: phony claudia

@@ -8,8 +8,8 @@ Claudia parses Clang's -Weverything diagnostics and tries her best to polish the
 ## Getting started
 
 Required:
-* recent clang (tested with 3.4) and libc++ (primarily for regex support)
-* recent gcc/libstdc++ setups may work, too.
+* recent Clang compiler
+* recent Boost libraries
 
 Build claudia using the ninja build system:
 
@@ -17,7 +17,7 @@ Build claudia using the ninja build system:
 
 If you don't have ninja, you may build claudia using:
 
-    clang++ -stdlib=libc++ -std=c++11 src/*.cc -o claudia
+    clang++ -std=c++11 -O2 src/*.cc -lboost_program_options -lboost_regex -o claudia
 
 
 ## Usage
@@ -34,10 +34,13 @@ Create a file containing your project's diagnostics:
 
     make 2> diagnostics.txt
 
-Let claudia parse them:
+Let claudia parse them, e.g.:
 
-    claudia diagnostics.txt
+    claudia -o out.json diagnostics.txt
 
+See all options:
+
+    claudia --help
 
 
 ## License
