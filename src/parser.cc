@@ -1,9 +1,11 @@
+#include <cstddef>
 #include <istream>
 #include <ostream>
 #include <algorithm>
 #include <stdexcept>
 #include <iterator>
 #include <utility>
+#include <map>
 
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/range/algorithm/sort.hpp>
@@ -52,34 +54,66 @@ parser::parser(std::istream& in, const std::string& format)
   diagnostics_ = std::move(local);
 }
 
-void parser::report(std::ostream& out, bool summary) const
+void parser::report(std::ostream& out, bool want_summary) const
 {
-  boost::property_tree::ptree root;
+  property::ptree root;
 
-  if (summary)
-    root.add_child("summary", do_summary());
+  if (want_summary)
+    root.add_child("summary", summary());
 
-  root.add_child("diagnostics", do_report());
+  root.add_child("diagnostics", report());
 
-  boost::property_tree::write_json(out, root);
+  property::write_json(out, root);
 }
 
-boost::property_tree::ptree parser::do_summary() const
+property::ptree parser::report() const
 {
-  boost::property_tree::ptree root;
+  property::ptree root;
 
-  // XXX: statistics
-  // root.put(k, v);
+  for (const auto diagnostic : diagnostics_)
+    root.push_back(std::make_pair("", diagnostic.report()));
 
   return root;
 }
 
-boost::property_tree::ptree parser::do_report() const
+property::ptree parser::summary() const
 {
-  boost::property_tree::ptree root;
+  property::ptree root;
+
+  root.add_child("by_file", group_by_file());
+  root.add_child("by_flag", group_by_flag());
+
+  return root;
+}
+
+property::ptree parser::group_by_file() const
+{
+  property::ptree root;
+
+  auto file_comp = [](const diagnostic& lhs, const diagnostic rhs) { return lhs.file < rhs.file; };
+  std::map<diagnostic, std::size_t, decltype(file_comp)> by_file(file_comp);
 
   for (const auto diagnostic : diagnostics_)
-    root.push_back(std::make_pair("", diagnostic.report()));
+    by_file[diagnostic] += 1;
+
+  for (const auto kv : by_file)
+    root.push_back(property::ptree::value_type(kv.first.file, property::ptree(std::to_string(kv.second))));
+
+  return root;
+}
+
+property::ptree parser::group_by_flag() const
+{
+  property::ptree root;
+
+  auto flag_comp = [](const diagnostic& lhs, const diagnostic rhs) { return lhs.flag < rhs.flag; };
+  std::map<diagnostic, std::size_t, decltype(flag_comp)> by_flag(flag_comp);
+
+  for (const auto diagnostic : diagnostics_)
+    by_flag[diagnostic] += 1;
+
+  for (const auto kv : by_flag)
+    root.push_back(property::ptree::value_type(kv.first.flag, property::ptree(std::to_string(kv.second))));
 
   return root;
 }

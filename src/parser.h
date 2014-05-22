@@ -13,13 +13,17 @@ class parser {
 public:
   parser(std::istream& in, const std::string& format);
 
-  void report(std::ostream& out, bool summary = true) const;
+  void report(std::ostream& out, bool want_summary = true) const;
 
 private:
   std::vector<diagnostic> diagnostics_;
-  
-  boost::property_tree::ptree do_summary() const;
-  boost::property_tree::ptree do_report() const;
+
+  property::ptree report() const;
+
+  /* XXX: generic group_by(cmp) */
+  property::ptree summary() const;
+  property::ptree group_by_file() const;
+  property::ptree group_by_flag() const;
 };
 }
 

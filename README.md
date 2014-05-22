@@ -26,7 +26,7 @@ In your project environment set your compiler flags:
 
     -Weverything -fdiagnostics-show-category=name -fno-diagnostics-fixit-info
 
-Or adapt the diagnostics pattern in config.h accordingly, but be sure to match regex groups to the parser's match extraction in parser.cc.
+Or adapt the diagnostics format accordingly (see: claudia --help); the parser expects five groups for extraction.
 
 See: http://llvm.org/releases/3.4/tools/clang/docs/UsersManual.html#formatting-of-diagnostics
 

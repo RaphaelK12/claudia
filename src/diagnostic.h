@@ -8,22 +8,22 @@
 
 namespace claudia {
 
-class diagnostic {
-public:
+namespace property = boost::property_tree;
+
+struct diagnostic {
   diagnostic(std::string file, std::size_t line, std::size_t column, std::string message, std::string flag);
 
-  boost::property_tree::ptree report() const;
+  property::ptree report() const;
 
-  bool friend operator<(const diagnostic& lhs, const diagnostic& rhs);
-  bool friend operator==(const diagnostic& lhs, const diagnostic& rhs);
-
-private:
-  std::string file_;
-  std::size_t line_;
-  std::size_t column_;
-  std::string message_;
-  std::string flag_;
+  std::string file;
+  std::size_t line;
+  std::size_t column;
+  std::string message;
+  std::string flag;
 };
+
+bool operator<(const diagnostic& lhs, const diagnostic& rhs);
+bool operator==(const diagnostic& lhs, const diagnostic& rhs);
 }
 
 #endif
