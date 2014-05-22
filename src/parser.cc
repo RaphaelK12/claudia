@@ -37,8 +37,13 @@ parser::parser(std::istream& in, const std::string& format)
 
   /* non-matches are silently ignored */
   std::for_each(it, end, [&](std::string line) {
-    if (boost::regex_search(std::move(line), match, pattern))
+    if (boost::regex_search(std::move(line), match, pattern)) {
+      /* 0th sub-match is entire matched expression */
+      if (match.size() - 1 != 5)
+        throw std::runtime_error{"bad format: five groups required: file, line, column, message, flag"};
+
       local.emplace_back(match[1], std::stoull(match[2]), std::stoull(match[3]), match[4], match[5]);
+    }
   });
 
   /* no std::set -- this way it's more memory friendly */
